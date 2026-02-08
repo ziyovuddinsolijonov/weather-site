@@ -99,6 +99,13 @@ h1 {
     }
 }
 
+/* Отключить анимацию для пользователей с настройкой reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .autocomplete-list {
+        animation: none;
+    }
+}
+
 .autocomplete-list.show {
     display: block;
 }

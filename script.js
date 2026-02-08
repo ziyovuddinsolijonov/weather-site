@@ -306,10 +306,13 @@ cityInput.addEventListener('keydown', (event) => {
     }
 });
 
-// Закрытие списка при клике вне области
+// Закрытие списка при клике вне области (оптимизировано)
 document.addEventListener('click', (event) => {
-    if (!cityInput.contains(event.target) && !autocompleteList.contains(event.target)) {
-        closeSuggestions();
+    // Проверяем только если список открыт
+    if (autocompleteList.classList.contains('show')) {
+        if (!cityInput.contains(event.target) && !autocompleteList.contains(event.target)) {
+            closeSuggestions();
+        }
     }
 });
 
