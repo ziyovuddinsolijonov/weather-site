@@ -1,0 +1,39 @@
+# Зависимости
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Временные файлы
+*.tmp
+*.temp
+.cache/
+
+# Файлы операционной системы
+Thumbs.db
+Desktop.ini
+
+# Логи
+*.log
+logs/
+
+# Переменные окружения
+.env
+.env.local
+.env.*.local
+
+# Сборка и дистрибутив
+dist/
+build/
+
+# Тестирование
+coverage/
+.nyc_output/
