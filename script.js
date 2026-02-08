@@ -16,28 +16,6 @@ const weatherIcons = {
     'thunderstorm': '⛈️'
 };
 
-// Переводы описаний погоды на русский
-const weatherTranslations = {
-    'Clear sky': 'Ясное небо',
-    'Mainly clear': 'Преимущественно ясно',
-    'Partly cloudy': 'Переменная облачность',
-    'Overcast': 'Пасмурно',
-    'Fog': 'Туман',
-    'Depositing rime fog': 'Изморозь',
-    'Light drizzle': 'Лёгкая морось',
-    'Moderate drizzle': 'Умеренная морось',
-    'Dense drizzle': 'Сильная морось',
-    'Light rain': 'Небольшой дождь',
-    'Moderate rain': 'Умеренный дождь',
-    'Heavy rain': 'Сильный дождь',
-    'Light snow': 'Небольшой снег',
-    'Moderate snow': 'Умеренный снег',
-    'Heavy snow': 'Сильный снег',
-    'Thunderstorm': 'Гроза',
-    'Thunderstorm with light hail': 'Гроза с небольшим градом',
-    'Thunderstorm with heavy hail': 'Гроза с сильным градом'
-};
-
 // Получение иконки по коду погоды Open-Meteo
 function getWeatherIcon(weatherCode) {
     if (weatherCode === 0) return weatherIcons['clear'];

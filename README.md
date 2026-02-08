@@ -107,11 +107,17 @@ weather-site/
 4. Сохраните изменения
 5. Сайт будет доступен по адресу: `https://ziyovuddinsolijonov.github.io/weather-site/`
 
-## 📸 Скриншот
+## 📸 Скриншоты
 
-![Weather Site Screenshot](https://via.placeholder.com/800x600.png?text=Weather+Site+Screenshot)
+### Главная страница
+![Weather Site Main Page](https://github.com/user-attachments/assets/70b9139e-e0ad-458d-bfe0-440943c6d0ea)
 
-*Интерфейс сайта с отображением погоды в Москве*
+*Главная страница с полем ввода города*
+
+### Обработка ошибок
+![Weather Site Error Handling](https://github.com/user-attachments/assets/1a3a9e74-6f3a-4f4f-90f4-6934d7257cf7)
+
+*Красивое отображение ошибок*
 
 ## 🤝 Вклад в проект
 
