@@ -4,7 +4,7 @@ const searchBtn = document.getElementById('searchBtn');
 const weatherResult = document.getElementById('weatherResult');
 const autocompleteList = document.getElementById('autocomplete-list');
 
-// Популярные города (50+ городов из разных стран)
+// Популярные города (70+ городов из разных стран)
 const popularCities = [
     // Узбекистан
     'Ташкент', 'Самарканд', 'Бухара', 'Андижан', 'Наманган', 'Фергана', 'Карши', 'Нукус', 'Термез', 'Коканд',
@@ -27,6 +27,9 @@ const popularCities = [
     'Kyiv', 'Minsk', 'Almaty', 'Baku', 'Tbilisi', 'Yerevan'
 ];
 
+// Предобработанный массив городов в нижнем регистре для оптимизации поиска
+const popularCitiesLower = popularCities.map(city => city.toLowerCase());
+
 // Переменная для отслеживания активной подсказки
 let activeIndex = -1;
 
@@ -36,10 +39,14 @@ function filterCities(input) {
     
     const searchText = input.toLowerCase().trim();
     
-    // Фильтруем города и ограничиваем до 10 результатов
-    return popularCities
-        .filter(city => city.toLowerCase().includes(searchText))
-        .slice(0, 10);
+    // Фильтруем города используя предобработанный массив и ограничиваем до 10 результатов
+    const results = [];
+    for (let i = 0; i < popularCities.length && results.length < 10; i++) {
+        if (popularCitiesLower[i].includes(searchText)) {
+            results.push(popularCities[i]);
+        }
+    }
+    return results;
 }
 
 // Функция отображения подсказок
@@ -94,8 +101,12 @@ function updateActiveItem() {
     items.forEach((item, index) => {
         if (index === activeIndex) {
             item.classList.add('active');
-            // Прокручиваем к активному элементу
-            item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            // Прокручиваем к активному элементу с учётом настроек анимации пользователя
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            item.scrollIntoView({ 
+                block: 'nearest', 
+                behavior: prefersReducedMotion ? 'auto' : 'smooth' 
+            });
         } else {
             item.classList.remove('active');
         }
