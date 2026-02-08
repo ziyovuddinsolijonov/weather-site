@@ -10,7 +10,10 @@
     <div class="container">
         <h1>Погода</h1>
         <div class="search-box">
-            <input type="text" id="cityInput" placeholder="Введите название города" autocomplete="off">
+            <div class="autocomplete-container">
+                <input type="text" id="cityInput" placeholder="Введите название города" autocomplete="off">
+                <div id="autocomplete-list" class="autocomplete-list"></div>
+            </div>
             <button id="searchBtn">Узнать погоду</button>
         </div>
         <div id="weatherResult" class="weather-result"></div>

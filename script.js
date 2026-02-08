@@ -2,6 +2,116 @@
 const cityInput = document.getElementById('cityInput');
 const searchBtn = document.getElementById('searchBtn');
 const weatherResult = document.getElementById('weatherResult');
+const autocompleteList = document.getElementById('autocomplete-list');
+
+// Популярные города (70+ городов из разных стран)
+const popularCities = [
+    // Узбекистан
+    'Ташкент', 'Самарканд', 'Бухара', 'Андижан', 'Наманган', 'Фергана', 'Карши', 'Нукус', 'Термез', 'Коканд',
+    // Россия
+    'Москва', 'Санкт-Петербург', 'Новосибирск', 'Екатеринбург', 'Казань', 'Нижний Новгород', 'Челябинск', 'Красноярск', 'Самара', 'Уфа',
+    // Европа
+    'Лондон', 'Париж', 'Берлин', 'Мадрид', 'Рим', 'Амстердам', 'Барселона', 'Вена', 'Прага', 'Варшава',
+    'London', 'Paris', 'Berlin', 'Madrid', 'Rome', 'Amsterdam', 'Barcelona', 'Vienna', 'Prague', 'Warsaw',
+    // Азия
+    'Токио', 'Сеул', 'Пекин', 'Шанхай', 'Дубай', 'Бангкок', 'Сингапур', 'Стамбул', 'Дели', 'Мумбаи',
+    'Tokyo', 'Seoul', 'Beijing', 'Shanghai', 'Dubai', 'Bangkok', 'Singapore', 'Istanbul', 'Delhi', 'Mumbai',
+    // Америка
+    'Нью-Йорк', 'Лос-Анджелес', 'Чикаго', 'Майами', 'Торонто', 'Ванкувер', 'Мехико',
+    'New York', 'Los Angeles', 'Chicago', 'Miami', 'Toronto', 'Vancouver', 'Mexico City',
+    // Другие
+    'Сидней', 'Мельбурн', 'Кейптаун', 'Каир',
+    'Sydney', 'Melbourne', 'Cape Town', 'Cairo',
+    // Дополнительные города
+    'Киев', 'Минск', 'Алматы', 'Баку', 'Тбилиси', 'Ереван',
+    'Kyiv', 'Minsk', 'Almaty', 'Baku', 'Tbilisi', 'Yerevan'
+];
+
+// Предобработанный массив городов в нижнем регистре для оптимизации поиска
+const popularCitiesLower = popularCities.map(city => city.toLowerCase());
+
+// Переменная для отслеживания активной подсказки
+let activeIndex = -1;
+
+// Функция фильтрации городов по введённому тексту
+function filterCities(input) {
+    if (!input) return [];
+    
+    const searchText = input.toLowerCase().trim();
+    
+    // Фильтруем города используя предобработанный массив и ограничиваем до 10 результатов
+    const results = [];
+    for (let i = 0; i < popularCities.length && results.length < 10; i++) {
+        if (popularCitiesLower[i].includes(searchText)) {
+            results.push(popularCities[i]);
+        }
+    }
+    return results;
+}
+
+// Функция отображения подсказок
+function showSuggestions(cities) {
+    // Очищаем список
+    autocompleteList.innerHTML = '';
+    activeIndex = -1;
+    
+    if (cities.length === 0) {
+        closeSuggestions();
+        return;
+    }
+    
+    // Создаём элементы подсказок
+    cities.forEach((city, index) => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item';
+        item.textContent = city;
+        item.dataset.index = index;
+        
+        // Обработчик клика по подсказке
+        item.addEventListener('click', () => {
+            selectCity(city);
+        });
+        
+        autocompleteList.appendChild(item);
+    });
+    
+    // Показываем список
+    autocompleteList.classList.add('show');
+}
+
+// Функция выбора города
+function selectCity(city) {
+    cityInput.value = city;
+    closeSuggestions();
+    // Можно сразу запустить поиск погоды (опционально)
+    // searchWeather();
+}
+
+// Функция закрытия списка подсказок
+function closeSuggestions() {
+    autocompleteList.classList.remove('show');
+    autocompleteList.innerHTML = '';
+    activeIndex = -1;
+}
+
+// Функция обновления активной подсказки
+function updateActiveItem() {
+    const items = autocompleteList.querySelectorAll('.autocomplete-item');
+    
+    items.forEach((item, index) => {
+        if (index === activeIndex) {
+            item.classList.add('active');
+            // Прокручиваем к активному элементу с учётом настроек анимации пользователя
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            item.scrollIntoView({ 
+                block: 'nearest', 
+                behavior: prefersReducedMotion ? 'auto' : 'smooth' 
+            });
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
 
 // Иконки погоды (emoji)
 const weatherIcons = {
@@ -155,9 +265,54 @@ async function searchWeather() {
 // Обработчик клика по кнопке
 searchBtn.addEventListener('click', searchWeather);
 
-// Обработчик нажатия Enter в поле ввода
-cityInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        searchWeather();
+// Обработчик ввода текста для автодополнения
+cityInput.addEventListener('input', (event) => {
+    const inputValue = event.target.value;
+    const filteredCities = filterCities(inputValue);
+    showSuggestions(filteredCities);
+});
+
+// Обработчик нажатия клавиш в поле ввода
+cityInput.addEventListener('keydown', (event) => {
+    const items = autocompleteList.querySelectorAll('.autocomplete-item');
+    
+    if (event.key === 'ArrowDown') {
+        // Стрелка вниз - переход к следующей подсказке
+        event.preventDefault();
+        if (items.length > 0) {
+            activeIndex = (activeIndex + 1) % items.length;
+            updateActiveItem();
+        }
+    } else if (event.key === 'ArrowUp') {
+        // Стрелка вверх - переход к предыдущей подсказке
+        event.preventDefault();
+        if (items.length > 0) {
+            activeIndex = activeIndex <= 0 ? items.length - 1 : activeIndex - 1;
+            updateActiveItem();
+        }
+    } else if (event.key === 'Enter') {
+        // Enter - выбор активной подсказки или поиск
+        if (activeIndex >= 0 && items[activeIndex]) {
+            event.preventDefault();
+            const selectedCity = items[activeIndex].textContent;
+            selectCity(selectedCity);
+        } else {
+            // Если нет активной подсказки, выполняем поиск
+            searchWeather();
+        }
+    } else if (event.key === 'Escape') {
+        // Escape - закрытие списка
+        closeSuggestions();
     }
 });
+
+// Закрытие списка при клике вне области (оптимизировано)
+document.addEventListener('click', (event) => {
+    // Проверяем только если список открыт
+    if (autocompleteList.classList.contains('show')) {
+        if (!cityInput.contains(event.target) && !autocompleteList.contains(event.target)) {
+            closeSuggestions();
+        }
+    }
+});
+
